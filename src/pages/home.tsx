@@ -1,15 +1,8 @@
-import {
-  Text,
-  StyleSheet,
-  View,
-  TouchableOpacity,
-  FlatList,
-  SafeAreaView,
-  ScrollView,
-} from "react-native";
+import { Text, View, TouchableOpacity, ScrollView, Modal } from "react-native";
 import { FileCard } from "../components/FileCard";
 import { styles } from "./style";
 import { useState } from "react";
+import Camera from "../components/Camera";
 
 const data = [
   {
@@ -66,12 +59,21 @@ export default function HomePage() {
   const quantityItems = 3;
   const [seeMoreRecents, setSeeMoreRecents] = useState(false);
   const [seeMoreYourList, setSeeMoreYourList] = useState(false);
+  const [openCam, setOpenCam] = useState(false);
+
+  function handleCamera() {
+    setOpenCam(!openCam);
+  }
+
   return (
     <ScrollView>
+      <Modal visible={openCam} transparent={false} animationType="slide">
+        <Camera setOpenCam={setOpenCam} />
+      </Modal>
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.primaryText}>Book Scanner</Text>
-          <TouchableOpacity style={styles.buttonScan}>
+          <TouchableOpacity style={styles.buttonScan} onPress={handleCamera}>
             <Text style={styles.buttonText}>New</Text>
           </TouchableOpacity>
         </View>
@@ -80,8 +82,9 @@ export default function HomePage() {
           <View style={styles.listContent}>
             {data.map((item, index) => {
               if (!seeMoreRecents && index < quantityItems)
-                return <FileCard {...item} />;
-              else if (seeMoreRecents) return <FileCard {...item} />;
+                return <FileCard key={index} {...item} />;
+              else if (seeMoreRecents)
+                return <FileCard key={index*2} {...item} />;
               return <></>;
             })}
           </View>
@@ -99,8 +102,9 @@ export default function HomePage() {
           <View style={styles.listContent}>
             {data.map((item, index) => {
               if (!seeMoreYourList && index < quantityItems)
-                return <FileCard {...item} />;
-              else if (seeMoreYourList) return <FileCard {...item} />;
+                return <FileCard key={index} {...item} />;
+              else if (seeMoreYourList)
+                return <FileCard key={index*3} {...item} />;
               return <></>;
             })}
           </View>
